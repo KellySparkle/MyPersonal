@@ -3,13 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Анимация волны</title>
+  <title>Главная страница</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap" rel="stylesheet"> <!-- Подключение шрифта -->
   <style>
+    .welcome-text {
+      font-family: 'Nothing You Could Do', cursive; /* Установка шрифта */
+      font-size: 46px; /* Размер шрифта */
+      text-align: center; /* Центрирование текста */
+      top: 20px; /* Отступ сверху */
+    }
+
+    canvas {
+      background-color: transparent;
+    }
     body {
       margin: 0;
       overflow: hidden;
       background: linear-gradient(to bottom, #fff); /* Пример градиента */
       height: 100vh;
+      display: flex;
+      justify-content: center; /* Центрирование по горизонтали */
+      align-items: flex-start; /* Выравнивание по верхнему краю */
+      flex-direction: column; /* Вертикальное расположение элементов */
     }
 
     canvas {
@@ -18,13 +33,14 @@
   </style>
 </head>
 <body>
+  <div class="welcome-text">Welcome</div>
   <canvas id="waveCanvas"></canvas>
   <script>
     const canvas = document.getElementById('waveCanvas');
     const ctx = canvas.getContext('2d');
 
-    let waveColor1 = '#ff94b8'; // Первый цвет волны
-    let waveColor2 = '#ff94b8'; // Второй цвет волны
+    let waveColor1 = '#FFD5E5'; // Первый цвет волны
+    let waveColor2 = '#FFD5E5'; // Второй цвет волны
     let waveFrequency = 0.001; // Частота волны
     let wavePhase = 0; // Фаза волны (для анимации)
     let waveSpeed = 0.007; // Скорость движения волны
@@ -79,7 +95,7 @@
       ctx.lineTo(0, canvasHeight); 
       ctx.closePath();
 
-      ctx.fillStyle = '#ff5959';
+      ctx.fillStyle = '#EB5A94';
       ctx.fill();
 
       // Изменяем фазу для анимации (только влево)
