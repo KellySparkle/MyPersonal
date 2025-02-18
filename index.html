@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Анимация волны</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #fff); /* Пример градиента */
+      height: 100vh;
+    }
+
+    canvas {
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="waveCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('waveCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let waveColor1 = '#ff94b8'; // Первый цвет волны
+    let waveColor2 = '#ff94b8'; // Второй цвет волны
+    let waveFrequency = 0.001; // Частота волны
+    let wavePhase = 0; // Фаза волны (для анимации)
+    let waveSpeed = 0.007; // Скорость движения волны
+    let direction = 0.2; // Направление движения (1 - вправо, -1 - влево)
+    
+    function resizeCanvas() {
+      canvasWidth = window.innerWidth;
+      canvasHeight = window.innerHeight; // Волна занимает всю высоту экрана
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+    }
+
+    function drawWave() {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      // Рисуем первую часть волны (градиент)
+      ctx.beginPath();
+      ctx.moveTo(0, canvasHeight / 2);
+
+      for (let x = 0; x <= canvasWidth; x++) {
+        let amplitude = Math.abs(canvasWidth / 2 - x) / (canvasWidth / 2) * 50; // Максимальная амплитуда — 50
+        let y = (canvasHeight / 2) + Math.sin(x * waveFrequency + wavePhase) * amplitude;
+        ctx.lineTo(x, y);
+      }
+
+      ctx.lineTo(canvasWidth, canvasHeight); // Линия вниз до нижнего края
+      ctx.lineTo(0, canvasHeight);          // Линия влево по нижнему краю
+      ctx.closePath();
+
+      let gradient = ctx.createLinearGradient(0, canvasHeight / 2, 0, canvasHeight);
+      gradient.addColorStop(0, waveColor1);
+      gradient.addColorStop(1, waveColor2);
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+
+      // Рисуем черную полосу
+      ctx.beginPath();
+      ctx.moveTo(0, canvasHeight / 2);
+
+      for (let x = 0; x <= canvasWidth; x++) {
+        let amplitude = Math.abs(canvasWidth / 2 - x) / (canvasWidth / 2) * 50;
+        let y =
+          (canvasHeight / 2) +
+          Math.sin(x * waveFrequency + wavePhase) * amplitude;
+
+        let stripeWidth = Math.max(1, Math.abs(Math.sin(wavePhase)) * 5); // Ширина полосы от 1 до 5 пикселей
+        ctx.lineTo(x, y + stripeWidth); // Смещаем линию вниз на ширину полосы
+      }
+
+      ctx.lineTo(canvasWidth, canvasHeight); 
+      ctx.lineTo(0, canvasHeight); 
+      ctx.closePath();
+
+      ctx.fillStyle = '#ff5959';
+      ctx.fill();
+
+      // Изменяем фазу для анимации (только влево)
+      wavePhase -= waveSpeed; // Движение только влево
+
+      if (wavePhase < -Math.PI * 2) {
+        wavePhase += Math.PI * 2; // Сброс фазы для цикличности
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      drawWave();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    resizeCanvas(); // Инициализация размеров canvas
+    animate(); // Запуск анимации
+  </script>
+</body>
+</html>
