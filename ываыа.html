@@ -7,11 +7,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&display=swap" rel="stylesheet">
   <style>
     html, body {
+      overflow-x: hidden; /* Отключает горизонтальный скролл */
       scroll-snap-type: y mandatory;
       overflow-y: scroll;
       height: 100vh;
       margin: 0;
     }
+
+    #waveCanvasMirror {
+      transform: scaleY(-1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 
 
 
@@ -25,7 +35,13 @@
     }
 
     #page2 {
-      background: #D5E5FF;
+      transform: scaleY(-1);
+      scroll-snap-align: start;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
 
     .welcome-text {
@@ -65,8 +81,9 @@
   </div>
 
   <div class="page" id="page2">
-    <h1>Вторая страница</h1>
-  </div>
+    <canvas id="waveCanvasMirror"></canvas>
+</div>
+
 
   <script>
 
@@ -155,7 +172,7 @@ function createStars() {
   }
 }
 function drawStars() {
-  ctx.fillStyle = '#FFD5E5'; // Розовый цвет звёзд
+  ctx.fillStyle = '#EB5A94'; // Розовый цвет звёзд
   stars.forEach(star => {
     ctx.beginPath();
     ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
@@ -184,6 +201,72 @@ function drawStars() {
     animate(); // Запуск анимации
 
 
+const canvasMirror = document.getElementById('waveCanvasMirror');
+const ctxMirror = canvasMirror.getContext('2d');
+
+function resizeMirrorCanvas() {
+    canvasMirror.width = window.innerWidth;
+    canvasMirror.height = window.innerHeight;
+}
+
+function drawMirrorWave() {
+    ctxMirror.clearRect(0, 0, canvasMirror.width, canvasMirror.height);
+    
+    // Отзеркаливаем весь канвас
+    ctxMirror.save();
+    ctxMirror.translate(0, canvasMirror.height);
+    ctxMirror.scale(1, -1); // Отражаем по вертикали
+
+    // Рисуем ту же волну
+    ctxMirror.beginPath();
+    ctxMirror.moveTo(0, canvasMirror.height / 2);
+
+    for (let x = 0; x <= canvasMirror.width; x++) {
+        let amplitude = Math.abs(canvasMirror.width / 2 - x) / (canvasMirror.width / 2) * 50;
+        let y = (canvasMirror.height / 2) + Math.sin(x * waveFrequency + wavePhase) * amplitude;
+        ctxMirror.lineTo(x, y);
+    }
+
+    ctxMirror.lineTo(canvasMirror.width, canvasMirror.height);
+    ctxMirror.lineTo(0, canvasMirror.height);
+    ctxMirror.closePath();
+
+    let gradient = ctxMirror.createLinearGradient(0, canvasMirror.height / 2, 0, canvasMirror.height);
+    gradient.addColorStop(0, waveColor1);
+    gradient.addColorStop(1, waveColor2);
+
+    ctxMirror.fillStyle = gradient;
+    ctxMirror.fill();
+
+    // Рисуем черную полосу
+    ctxMirror.beginPath();
+    ctxMirror.moveTo(0, canvasMirror.height / 2);
+
+    for (let x = 0; x <= canvasMirror.width; x++) {
+        let amplitude = Math.abs(canvasMirror.width / 2 - x) / (canvasMirror.width / 2) * 50;
+        let y = (canvasMirror.height / 2) + Math.sin(x * waveFrequency + wavePhase) * amplitude;
+        let stripeWidth = Math.max(1, Math.abs(Math.sin(wavePhase)) * 5);
+        ctxMirror.lineTo(x, y + stripeWidth);
+    }
+
+    ctxMirror.lineTo(canvasMirror.width, canvasMirror.height);
+    ctxMirror.lineTo(0, canvasMirror.height);
+    ctxMirror.closePath();
+
+    ctxMirror.fillStyle = '#EB5A94';
+    ctxMirror.fill();
+
+    ctxMirror.restore(); // Возвращаем обычную систему координат
+}
+
+function animateMirror() {
+    requestAnimationFrame(animateMirror);
+    drawMirrorWave();
+}
+
+window.addEventListener('resize', resizeMirrorCanvas);
+resizeMirrorCanvas();
+animateMirror();
 
 
     function scrollDown() {
