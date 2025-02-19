@@ -14,6 +14,10 @@
       overflow-y: scroll;
       height: 100vh;
       margin: 0;
+      body {
+  scrollbar-width: thin;
+  scrollbar-color: #EB5A94 #fff;
+}
     }
 
     #waveCanvasMirror {
@@ -63,7 +67,22 @@
     text-align: center;
     top: 37px;
     left: 2%;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    animation: breathe 2s ease-in-out infinite alternate; /* Добавляем анимацию */
     }
+
+@keyframes breathe {
+  0% {
+    transform: scale(1); /* Начальный размер */
+    }
+  100% {
+    transform: scale(1.05); /* Увеличенный размер (можно изменить) */
+      }
+  }
 
     .scroll-down {
       position: fixed;
