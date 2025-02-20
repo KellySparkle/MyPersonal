@@ -102,6 +102,51 @@
         transform: translateX(-50%) translateY(-10px);
       }
     }
+
+    .top-image {
+      position: fixed;
+      width: 400px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0; /* Устанавливаем высокий z-index, чтобы быть поверх всего */
+      animation: sway 5s infinite alternate ease-in-out; /* Добавляем анимацию покачивания */
+    }
+
+    @keyframes sway {
+      0% {
+        transform: translate(-50%, -50%) rotate(-3deg);
+      }
+      100% {
+        transform: translate(-50%, -50%) rotate(3deg);
+      }
+    }
+
+    .overlay {
+    position: absolute; /* Позиционируем относительно родительского элемента */
+    top: 50; /* Начинаем с верхней части */
+    left: 82; /* Начинаем с левой части */
+    width: 90%; /* Занимаем всю ширину */
+    height: 80%; /* Занимаем всю высоту */
+    background-color: #FF8DBA; /* Полупрозрачный розовый цвет */
+    opacity: 50%;
+    border-radius: 20px; /* Закругленные углы */
+    z-index: 5; /* Устанавливаем z-index, чтобы быть под изображением, но над фоном */
+}
+
+.hidden {
+  position: absolute; /* Позиционируем относительно родительского элемента */
+    top: 50; /* Начинаем с верхней части */
+    left: 82; /* Начинаем с левой части */
+    width: 90%; /* Занимаем всю ширину */
+    height: 80%; /* Занимаем всю высоту */
+    background-color: #fff; /* Полупрозрачный розовый цвет */
+    border-radius: 20px; /* Закругленные углы */
+    z-index: -1; /* Устанавливаем z-index, чтобы быть под изображением, но над фоном */
+}
+
+
+
   </style>
 </head>
 
@@ -109,15 +154,18 @@
   <div class="page" id="page1">
     <div class="welcome-text">WELCOME</div>
     <canvas id="waveCanvas"></canvas>
-    <div class="scroll-down" onclick="scrollDown()">&#x2193;</div>
+    <img src="C:\Users\Kelly\Desktop\мой сайт\image\первый кадр.png" alt="Изображение" class="top-image">
   </div>
 
   <div class="page" id="page2">
     <canvas id="waveCanvasMirror"></canvas>
+    <div class="overlay"></div>
+    <div class="hidden"></div>
 </div>
 
 <div class="page2" id="page3">
   <canvas id="waveCanvasMirror"></canvas>
+  <div class="hidden"></div>
 </div>
 
   <script>
@@ -131,6 +179,7 @@
     let wavePhase = 0; // Фаза волны (для анимации)
     let waveSpeed = 0.007; // Скорость движения волны
     let direction = 0.2; // Направление движения (1 - вправо, -1 - влево)
+    
     
     function resizeCanvas() {
       canvasWidth = window.innerWidth;
@@ -330,6 +379,34 @@ function scrollDown() {
 
       setTimeout(() => (isScrolling = false), 800);
     });
+
+let isImageVisible = true; // Переменная для отслеживания видимости изображения
+
+    function handleScroll() {
+        const page1 = document.getElementById('page1');
+        const page1Bottom = page1.offsetTop + page1.offsetHeight;
+
+        if (window.scrollY > page1Bottom && isImageVisible) {
+            // Если прокручиваем вниз за пределы первого экрана
+            document.querySelector('.top-image').style.display = 'none';
+            isImageVisible = false;
+        } else if (window.scrollY <= page1Bottom && !isImageVisible) {
+            // Если возвращаемся на первый экран
+            document.querySelector('.top-image').style.display = 'block';
+            isImageVisible = true;
+        }
+    }
+
+    // Добавляем обработчик события прокрутки
+    window.addEventListener('scroll', handleScroll);
+
+    function scrollDown() {
+      const nextSection = document.getElementById("page2");
+      if (nextSection) {
+          nextSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+    
   </script>
 </body>
 </html>
